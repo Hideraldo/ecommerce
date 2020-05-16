@@ -32,7 +32,7 @@ class Category extends Model {
 		Category::updateFile();
 
 	}
-
+	
 	public function get($idcategory)
 	{
 
@@ -58,7 +58,7 @@ class Category extends Model {
 		Category::updateFile();
 
 	}
-
+	
 	public static function updateFile()
 	{
 
@@ -214,4 +214,4 @@ class Category extends Model {
 
 }
 
-?>
+ ?>
