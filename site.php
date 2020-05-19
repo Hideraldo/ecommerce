@@ -252,19 +252,19 @@ $app->post("/checkout", function(){
 	]);
 
 	$order->save();
-
+	
 	switch ((int)$_POST['payment-method']) {
 
 		case 1:
-		header("Location: /order/".$order->getidorder()."/pagseguro");
+		header("Location: /order".$order->getidorder()."/pagseguro");
 		break;
 
 		case 2:
-		header("Location: /order/".$order->getidorder()."/paypal");
+		header("Location: /order".$order->getidorder()."/paypal");
 		break;
 
 	}
-
+	
 	exit;
 
 });
@@ -510,7 +510,7 @@ $app->post("/profile", function(){
 
 	if ($_POST['desemail'] !== $user->getdesemail()) {
 
-		if (User::checkLoginExists($_POST['desemail']) === true) {
+		if (User::checkLoginExist($_POST['desemail']) === true) {
 
 			User::setError("Este endereço de e-mail já está cadastrado.");
 			header('Location: /profile');
@@ -520,13 +520,14 @@ $app->post("/profile", function(){
 
 	}
 
+	$_POST['iduser'] = $user->getiduser();
 	$_POST['inadmin'] = $user->getinadmin();
 	$_POST['despassword'] = $user->getdespassword();
 	$_POST['deslogin'] = $_POST['desemail'];
 
 	$user->setData($_POST);
 
-	$user->save();
+	$user->update();
 
 	User::setSuccess("Dados alterados com sucesso!");
 

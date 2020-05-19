@@ -236,8 +236,9 @@ class User extends Model {
 
 				$dataRecovery = $results2[0];
 
-				$cipher="AES-128-ECB";
-				$code= base64_encode(openssl_encrypt($$dataRecovery,$cipher,User::SECRET));
+				$code = openssl_encrypt($dataRecovery['idrecovery'], 'AES-128-CBC', pack("a16", User::SECRET), 0, pack("a16", User::SECRET_IV));
+
+				$code = base64_encode($code);
 
 				//$code = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_128, User::SECRET, $dataRecovery["idrecovery"], MCRYPT_MODE_ECB));
 
@@ -273,8 +274,12 @@ class User extends Model {
 
 		//$idrecovery = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, User::SECRET, base64_decode($code), MCRYPT_MODE_ECB);
 
-		list($encrypted, $iv) = explode('::', base64_decode($code));
-    	$idrecovery = openssl_decrypt($encrypted, 'aes-256-cbc', USER::SECRET, 0,  $iv);
+		//list($encrypted, $iv) = explode('::', base64_decode($code));
+		//$idrecovery = openssl_decrypt($encrypted, 'aes-256-cbc', USER::SECRET, 0,  $iv);
+		
+		$code = base64_decode($code);
+
+		$idrecovery = openssl_decrypt($code, 'AES-128-CBC', pack("a16", User::SECRET), 0, pack("a16", User::SECRET_IV));
 
 		$sql = new Sql();
 
