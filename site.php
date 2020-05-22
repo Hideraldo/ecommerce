@@ -252,19 +252,19 @@ $app->post("/checkout", function(){
 	]);
 
 	$order->save();
-	
+
 	switch ((int)$_POST['payment-method']) {
 
 		case 1:
-		header("Location: /order".$order->getidorder()."/pagseguro");
+		header("Location: /order/".$order->getidorder()."/pagseguro");
 		break;
 
 		case 2:
-		header("Location: /order".$order->getidorder()."/paypal");
+		header("Location: /order/".$order->getidorder()."/paypal");
 		break;
 
 	}
-	
+
 	exit;
 
 });
@@ -527,7 +527,10 @@ $app->post("/profile", function(){
 
 	$user->setData($_POST);
 
-	$user->update();
+	$user->update(false);
+
+	//não tinha esta linha
+	$_SESSION[User::SESSION] = $user->getValues();
 
 	User::setSuccess("Dados alterados com sucesso!");
 
@@ -724,7 +727,10 @@ $app->post("/profile/change-password", function(){
 
 	$user->setdespassword($_POST['new_pass']);
 
-	$user->update();
+	$user->updatepassword();
+
+	//não tinha esta linha
+	//$_SESSION[User::SESSION] = $user->getValues();
 
 	User::setSuccess("Senha alterada com sucesso.");
 

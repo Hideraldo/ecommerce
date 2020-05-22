@@ -78,7 +78,7 @@ class User extends Model {
 		}
 
 		$data = $results[0];
-
+		
 		if (password_verify($password, $data["despassword"]) === true)
 		{
 
@@ -91,7 +91,7 @@ class User extends Model {
 			$_SESSION[User::SESSION] = $user->getValues();
 
 			return $user;
-
+			
 		} else {
 			throw new \Exception("Usuário inexistente ou senha inválida.");
 		}
@@ -175,26 +175,6 @@ class User extends Model {
 			":iduser"=>$this->getiduser(),
 			":desperson"=>utf8_decode($this->getdesperson()),
 			":deslogin"=>$this->getdeslogin(),
-			":despassword"=>$this->getdespassword(),
-			//":despassword"=>User::getPasswordHash($this->getdespassword()),
-			":desemail"=>$this->getdesemail(),
-			":nrphone"=>$this->getnrphone(),
-			":inadmin"=>$this->getinadmin()
-		));
-
-		$this->setData($results[0]);		
-
-	}
-
-	public function updatepassword()
-	{
-
-		$sql = new Sql();
-
-		$results = $sql->select("CALL sp_usersupdate_save(:iduser, :desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)", array(
-			":iduser"=>$this->getiduser(),
-			":desperson"=>utf8_decode($this->getdesperson()),
-			":deslogin"=>$this->getdeslogin(),
 			":despassword"=>User::getPasswordHash($this->getdespassword()),
 			":desemail"=>$this->getdesemail(),
 			":nrphone"=>$this->getnrphone(),
@@ -256,12 +236,11 @@ class User extends Model {
 
 				$dataRecovery = $results2[0];
 
-				//$code = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_128, User::SECRET, $dataRecovery["idrecovery"], MCRYPT_MODE_ECB));
-
-				$code = openssl_encrypt($dataRecovery['idrecovery'], 'AES-128-CBC', pack("a16", User::SECRET), 0, pack("a16", User::SECRET));
+				$code = openssl_encrypt($dataRecovery['idrecovery'], 'AES-128-CBC', pack("a16", User::SECRET), 0, pack("a16", User::SECRET_IV));
 
 				$code = base64_encode($code);
 
+				//$code = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_128, User::SECRET, $dataRecovery["idrecovery"], MCRYPT_MODE_ECB));
 
 				if ($inadmin === true) {
 					
@@ -295,9 +274,12 @@ class User extends Model {
 
 		//$idrecovery = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, User::SECRET, base64_decode($code), MCRYPT_MODE_ECB);
 
+		//list($encrypted, $iv) = explode('::', base64_decode($code));
+		//$idrecovery = openssl_decrypt($encrypted, 'aes-256-cbc', USER::SECRET, 0,  $iv);
+		
 		$code = base64_decode($code);
 
-		$idrecovery = openssl_decrypt($code, 'AES-128-CBC', pack("a16", User::SECRET), 0, pack("a16", User::SECRET));
+		$idrecovery = openssl_decrypt($code, 'AES-128-CBC', pack("a16", User::SECRET), 0, pack("a16", User::SECRET_IV));
 
 		$sql = new Sql();
 
@@ -522,7 +504,7 @@ class User extends Model {
 			'pages'=>ceil($resultTotal[0]["nrtotal"] / $itemsPerPage)
 		];
 
-	} 
+	}
 
 }
 

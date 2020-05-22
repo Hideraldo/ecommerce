@@ -1,9 +1,9 @@
-<?php
+<?php 
 
 use \Hcode\PageAdmin;
 use \Hcode\Model\User;
 
-$app->get('/admin/', function() {
+$app->get('/admin', function() {
     
 	User::verifyLogin();
 
@@ -113,4 +113,4 @@ $app->post("/admin/forgot/reset", function(){
 
 });
 
-?>
+ ?>

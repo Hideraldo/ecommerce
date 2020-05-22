@@ -58,7 +58,6 @@ $app->get("/admin/products/create", function(){
 
 });
 
-/*
 $app->post("/admin/products/create", function(){
 
 	User::verifyLogin();
@@ -72,17 +71,6 @@ $app->post("/admin/products/create", function(){
 	header("Location: /admin/products");
 	exit;
 
-});
-*/
-
-$app->post("/admin/products/create", function(){
-	User::verifyLogin();
-	$product = new Product();
-	$product->setData($_POST);
-	$product->save();
-	if($_FILES["file"]["name"] !== "") $product->setPhoto($_FILES['file']);
-	header("Location: /admin/products");
-	exit;
 });
 
 $app->get("/admin/products/:idproduct", function($idproduct){
@@ -113,7 +101,7 @@ $app->post("/admin/products/:idproduct", function($idproduct){
 
 	$product->save();
 
-	if ($_FILES["file"]["name"] !== "") {$product->setPhoto($_FILES["file"]);}
+	$product->setPhoto($_FILES["file"]);
 
 	header('Location: /admin/products');
 	exit;
